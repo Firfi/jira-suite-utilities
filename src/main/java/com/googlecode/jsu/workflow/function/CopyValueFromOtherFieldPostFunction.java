@@ -36,6 +36,7 @@ public class CopyValueFromOtherFieldPostFunction extends AbstractPreserveChanges
     ) throws WorkflowException {
         String fieldFromKey = args.get("sourceField");
         String fieldToKey = args.get("destinationField");
+        boolean override = !"false".equalsIgnoreCase(args.get("override"));
 
         Field fieldFrom = workflowUtils.getFieldFromKey(fieldFromKey);
         Field fieldTo = workflowUtils.getFieldFromKey(fieldToKey);
@@ -61,8 +62,11 @@ public class CopyValueFromOtherFieldPostFunction extends AbstractPreserveChanges
                 );
             }
 
-            // It set the value to field.
-            workflowUtils.setFieldValue(currentUser, issue, fieldToKey, sourceValue, holder);
+            if (override || null == workflowUtils.getFieldValueFromIssue(issue, fieldTo) ||
+                    workflowUtils.getFieldValueFromIssue(issue, fieldTo).toString().isEmpty()) {
+                workflowUtils.setFieldValue(currentUser, issue, fieldToKey, sourceValue, holder);
+            }
+
 
             if (log.isDebugEnabled()) {
                 log.debug("Value was successfully copied");

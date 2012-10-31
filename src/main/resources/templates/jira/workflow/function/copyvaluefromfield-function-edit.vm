@@ -32,3 +32,20 @@
         <br><font size="1">$i18n.getText("copyvaluefromfield-function.destination.description")</font>
     </td>
 </tr>
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Do not override if value exists:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+				        <select id="override" name="override">
+                <option value="false"
+
+                >Do not override</option>
+                <option value="true"
+	                #if(${val-override} == "true")
+	                    SELECTED
+	                #end
+                >Override</option>
+	        </select>
+    </td>
+</tr>

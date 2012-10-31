@@ -11,6 +11,8 @@ import com.atlassian.jira.plugin.workflow.WorkflowPluginFunctionFactory;
 import com.googlecode.jsu.util.FieldCollectionsUtils;
 import com.googlecode.jsu.util.WorkflowUtils;
 import com.opensymphony.workflow.loader.AbstractDescriptor;
+import com.opensymphony.workflow.loader.FunctionDescriptor;
+import org.apache.log4j.Logger;
 
 /**
  * This class defines the parameters available for Copy Value From Other Field Post Function.
@@ -20,6 +22,8 @@ import com.opensymphony.workflow.loader.AbstractDescriptor;
 public class WorkflowCopyValueFromOtherFieldPostFunctionPluginFactory extends AbstractWorkflowPluginFactory implements WorkflowPluginFunctionFactory {
     private final FieldCollectionsUtils fieldCollectionsUtils;
     private final WorkflowUtils workflowUtils;
+
+    private final static Logger log = Logger.getLogger(WorkflowCopyValueFromOtherFieldPostFunctionPluginFactory.class);
 
     /**
      * @param fieldCollectionsUtils
@@ -52,9 +56,11 @@ public class WorkflowCopyValueFromOtherFieldPostFunctionPluginFactory extends Ab
 
         Field sourceFieldId = workflowUtils.getFieldFromDescriptor(descriptor, "sourceField");
         Field destinationField = workflowUtils.getFieldFromDescriptor(descriptor, "destinationField");
+        String override = (String) ((FunctionDescriptor) descriptor).getArgs().get("override");
 
         velocityParams.put("val-sourceFieldSelected", sourceFieldId);
         velocityParams.put("val-destinationFieldSelected", destinationField);
+        velocityParams.put("val-override", override);
     }
 
     /* (non-Javadoc)
@@ -63,7 +69,10 @@ public class WorkflowCopyValueFromOtherFieldPostFunctionPluginFactory extends Ab
     protected void getVelocityParamsForView(Map<String, Object> velocityParams, AbstractDescriptor descriptor) {
         Field sourceFieldId = workflowUtils.getFieldFromDescriptor(descriptor, "sourceField");
         Field destinationField = workflowUtils.getFieldFromDescriptor(descriptor, "destinationField");
+        String override = (String) ((FunctionDescriptor) descriptor).getArgs().get("override");
+        log.warn(override);
 
+        velocityParams.put("val-override", override);
         velocityParams.put("val-sourceFieldSelected", sourceFieldId);
         velocityParams.put("val-destinationFieldSelected", destinationField);
     }
@@ -77,9 +86,10 @@ public class WorkflowCopyValueFromOtherFieldPostFunctionPluginFactory extends Ab
         try{
             String sourceField = extractSingleParam(conditionParams, "sourceFieldsList");
             String destinationField = extractSingleParam(conditionParams, "destinationFieldsList");
-
+            String override = extractSingleParam(conditionParams, "override");
             params.put("sourceField", sourceField);
             params.put("destinationField", destinationField);
+            params.put("override", override);
         } catch (IllegalArgumentException iae) {
             // Aggregate so that Transitions can be added.
         }
