@@ -4,10 +4,14 @@ import java.util.Map;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.config.util.IndexPathManager;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.Field;
+import com.atlassian.jira.issue.index.IssueIndexManager;
 import com.atlassian.jira.issue.util.IssueChangeHolder;
 import com.atlassian.jira.util.I18nHelper;
+import com.atlassian.jira.util.ImportUtils;
 import com.googlecode.jsu.util.WorkflowUtils;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.WorkflowException;
@@ -20,10 +24,13 @@ import com.opensymphony.workflow.WorkflowException;
 public class CopyValueFromOtherFieldPostFunction extends AbstractPreserveChangesPostFunction {
     private final WorkflowUtils workflowUtils;
     private final I18nHelper.BeanFactory beanFactory;
+    private final IssueIndexManager issueIndexManager;
 
-    public CopyValueFromOtherFieldPostFunction(WorkflowUtils workflowUtils, I18nHelper.BeanFactory beanFactory) {
+
+    public CopyValueFromOtherFieldPostFunction(WorkflowUtils workflowUtils, I18nHelper.BeanFactory beanFactory, IssueIndexManager issueIndexManager) {
         this.workflowUtils = workflowUtils;
         this.beanFactory = beanFactory;
+        this.issueIndexManager = issueIndexManager;
     }
 
     /* (non-Javadoc)
@@ -65,6 +72,7 @@ public class CopyValueFromOtherFieldPostFunction extends AbstractPreserveChanges
             if (override || null == workflowUtils.getFieldValueFromIssue(issue, fieldTo) ||
                     workflowUtils.getFieldValueFromIssue(issue, fieldTo).toString().isEmpty()) {
                 workflowUtils.setFieldValue(currentUser, issue, fieldToKey, sourceValue, holder);
+
             }
 
 
